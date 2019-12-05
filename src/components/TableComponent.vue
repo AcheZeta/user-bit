@@ -1,56 +1,36 @@
 <template>
-  <div class="hello">
-    <table>
-      <tr>
-        <th>id</th>
-        <th>UserId</th>
-        <th>Title</th>
-        <th>Body</th>
-      </tr>
-      <tr v-for="item in posts" :key="item.id">
-        <td>{{ item.id }}</td>
-        <td>{{ item.userId }}</td>
-        <td>{{ item.title }}</td>
-        <td>{{ item.body }}</td>
-      </tr>
-    </table>
-  </div>
+  <ul v-if="posts && posts.length">
+    <li v-for="post in posts" :key="post.errors">
+      <p>
+        <strong>{{ post.title }}</strong>
+      </p>
+      <p>{{ post.body }}</p>
+    </li>
+  </ul>
 </template>
 
 <script>
 import axios from "axios";
-import env from "../config/env";
 
 export default {
-  name: "TableComponent",
   data() {
     return {
       posts: [],
-      postBody: null,
-      postTitle: null
+      errors: []
     };
   },
-  created: async function() {
-    let postsResponse = await axios.get(`${env.endpoint}/posts/`);
-    this.posts = postsResponse.data;
+
+  // Fetches posts when the component is created.
+  created() {
+    axios
+      .get(`http://jsonplaceholder.typicode.com/posts`)
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.posts = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
