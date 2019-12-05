@@ -18,13 +18,14 @@ export default {
     postPost() {
       axios
         .post(`http://jsonplaceholder.typicode.com/posts`, {
-          body: this.postBody
+          body: this.postBody,
+          title: this.postTitle
         })
-        .then(response => {
-          this.posts = response.data;
-        })
-        .catch(e => {
-          this.errors.push(e);
+        .then(() => {
+          this.posts.push({
+            title: this.postTitle,
+            body: this.postBody
+          });
         });
     }
   }
